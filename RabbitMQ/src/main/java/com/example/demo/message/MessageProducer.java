@@ -1,7 +1,7 @@
 package com.example.demo.message;
 
 import com.example.demo.dto.UserDTO;
-import com.example.demo.dto.UserMapper;
+import com.example.demo.mapper.UserMapper;
 import com.example.demo.message.dto.Message;
 import com.example.demo.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.function.Consumer;
 
 import static com.example.demo.message.Event.CREATED;
 import static com.example.demo.message.Event.DELETED;
@@ -20,7 +19,7 @@ import static com.example.demo.message.Event.DELETED;
 @Service
 public class MessageProducer {
 
-    public static final String EXCHANGE = "user";
+    private static final String EXCHANGE = "user";
 
     private AmqpTemplate amqpTemplate;
     private UserRepository repository;
@@ -37,7 +36,11 @@ public class MessageProducer {
             throw new IllegalArgumentException("User already exist");
         }
 
-        var message = Message.builder().event(CREATED).date(new Date()).user(user).build();
+        var message = Message.builder()
+                .event(CREATED)
+                .date(new Date())
+                .user(user).build();
+
         amqpTemplate.convertAndSend(EXCHANGE, "create", message);
         log.info("Sent to rabbit: {}", message);
     }
@@ -45,10 +48,11 @@ public class MessageProducer {
     public void sendDeleteUserMessage(String username) {
         var message = repository.findByUsername(username)
                 .map(UserMapper::entityToDTO)
-                .map(user -> new Message()
-                        .setUser(user)
-                        .setEvent(DELETED)
-                        .setDate(new Date()))
+                .map(user -> Message.builder()
+                        .user(user)
+                        .event(DELETED)
+                        .date(new Date())
+                        .build())
                 .orElseThrow(() -> new ObjectNotFoundException(username, EXCHANGE));
 
         amqpTemplate.convertAndSend(EXCHANGE, "delete", message);

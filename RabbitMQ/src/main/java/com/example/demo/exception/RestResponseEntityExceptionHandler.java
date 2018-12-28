@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -57,9 +58,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                             error.getDefaultMessage()))
                 .collect(joining(", "));
 
-        //concatenate validation errors
         String ss = Stream.of(fieldErrors, objectErrors)
-                .filter(s -> s != null && !s.isEmpty())
+                .parallel()
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty())
                 .collect(joining(", "));
 
         return handleExceptionInternal(ex, new ErrorMessage(ss), new HttpHeaders(),

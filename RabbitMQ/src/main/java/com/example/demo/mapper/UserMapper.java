@@ -1,5 +1,6 @@
-package com.example.demo.dto;
+package com.example.demo.mapper;
 
+import com.example.demo.dto.UserDTO;
 import com.example.demo.model.UserEntity;
 
 public interface UserMapper {
