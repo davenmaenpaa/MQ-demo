@@ -1,5 +1,6 @@
 package com.example.demo.message;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -32,6 +33,16 @@ public class Config {
     @Bean
     public TopicExchange topic() {
         return new TopicExchange("user");
+    }
+
+    @Bean
+    public Queue createQueue() {
+        return new Queue("user.create");
+    }
+
+    @Bean
+    public Queue deleteQueue() {
+        return new Queue("user.delete");
     }
 
 }
