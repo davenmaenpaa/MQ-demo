@@ -29,7 +29,7 @@ public class MessageListener {
                                  type = "topic"),
             key = "create"), containerFactory = "factory")
     public void createUser(Message message) {
-        log.info("Recieved Message: {}", message);
+        log.info("Received Message: {}", message);
 
         createEntityFromMessage.andThen(service.createUser)
                 .apply(message);
@@ -41,7 +41,7 @@ public class MessageListener {
                                  type = "topic"),
             key = "delete"), containerFactory = "factory")
     public void deleteUser(Message message) {
-        log.info("Recieved Message: {}", message);
+        log.info("Received Message: {}", message);
 
         service.deleteByUsername(message.getUser().getUsername());
     }

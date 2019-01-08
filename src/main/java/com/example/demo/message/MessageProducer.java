@@ -19,7 +19,6 @@ import static com.example.demo.message.Event.DELETED;
 @Service
 public class MessageProducer {
 
-    private static final String EXCHANGE = "user";
 
     private AmqpTemplate amqpTemplate;
     private UserRepository repository;
@@ -41,7 +40,7 @@ public class MessageProducer {
                 .date(new Date())
                 .user(user).build();
 
-        amqpTemplate.convertAndSend(EXCHANGE, "create", message);
+        amqpTemplate.convertAndSend("create", message);
         log.info("Sent to rabbit: {}", message);
     }
 
@@ -53,9 +52,9 @@ public class MessageProducer {
                         .event(DELETED)
                         .date(new Date())
                         .build())
-                .orElseThrow(() -> new ObjectNotFoundException(username, EXCHANGE));
+                .orElseThrow(IllegalArgumentException::new);
 
-        amqpTemplate.convertAndSend(EXCHANGE, "delete", message);
+        amqpTemplate.convertAndSend("delete", message);
         log.info("Sent to rabbit: {}", message);
     }
 

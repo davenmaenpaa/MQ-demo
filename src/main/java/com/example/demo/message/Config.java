@@ -21,7 +21,6 @@ public class Config {
     @Bean
     public SimpleRabbitListenerContainerFactory factory(ConnectionFactory connectionFactory,
                                                         SimpleRabbitListenerContainerFactoryConfigurer configurer) {
-
         var factory = new SimpleRabbitListenerContainerFactory();
         factory.setMessageConverter(jsonMessageConverter());
 
